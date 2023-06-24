@@ -7,4 +7,10 @@ export class Restaurant {
 
   @Field((returns) => Boolean, { nullable: true })
   isGood?: boolean;
+
+  @Field((returns) => String)
+  address: string;
+
+  @Field((returns) => String)
+  ownerName: string;
 }
