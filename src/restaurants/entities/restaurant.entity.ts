@@ -23,4 +23,8 @@ export class Restaurant {
   @Field((returns) => String)
   @Column()
   ownerName: string;
+
+  @Field((returns) => String)
+  @Column()
+  categoryName: string;
 }
