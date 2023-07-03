@@ -2,6 +2,8 @@
 
 backend
 
+http://127.0.0.1:3000/graphql
+
 ## User Model:
 
 - id
