@@ -54,10 +54,7 @@ export class UsersService {
       }
 
       // 로그인 성공시 토큰 발행
-      const token = jwt.sign(
-        { id: user.id, password: user.password },
-        this.config.get('PRIVATE_KEY'),
-      );
+      const token = this.jwtService.sign(user.id);
       return { ok: true, token };
     } catch (error) {
       return { ok: false, error };
