@@ -9,7 +9,7 @@ import * as jwt from 'jsonwebtoken';
 import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly config: ConfigService,
@@ -59,5 +59,9 @@ export class UsersService {
     } catch (error) {
       return { ok: false, error };
     }
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.users.findOne({ where: { id } });
   }
 }
