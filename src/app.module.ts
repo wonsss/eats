@@ -50,6 +50,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       driver: ApolloDriver,
       autoSchemaFile: true,
       sortSchema: true,
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
     UsersModule,
