@@ -16,6 +16,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { Verification } from './users/entities/verfication.entity';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { UsersModule } from './users/users.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
       namingStrategy: new SnakeNamingStrategy(),
-      entities: [User],
+      entities: [User, Verification],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

@@ -35,6 +35,10 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field((type) => Boolean)
+  verified: boolean;
+
   @BeforeUpdate() // 업데이트 전에 매번 해시화시킨다
   @BeforeInsert()
   async hashPassword(): Promise<void> {
