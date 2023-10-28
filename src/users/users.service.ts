@@ -8,11 +8,14 @@ import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
+import { Verification } from './entities/verification.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verifications: Repository<Verification>,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
@@ -30,7 +33,10 @@ export class UserService {
           error: 'There is a user with that email already',
         };
       }
-      await this.users.save(this.users.create({ email, password, role }));
+      const user = await this.users.save(
+        this.users.create({ email, password, role }),
+      );
+      await this.verifications.save(this.verifications.create({ user }));
       return { ok: true };
     } catch (e) {
       return {
@@ -76,6 +82,8 @@ export class UserService {
     }
     if (email) {
       user.email = email;
+      user.verified = false; // email이 변경되면 verified를 false로 변경
+      await this.verifications.save(this.verifications.create({ user }));
     }
     if (password) {
       user.password = password;

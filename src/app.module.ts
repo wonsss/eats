@@ -16,7 +16,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
-import { Verification } from './users/entities/verfication.entity';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
