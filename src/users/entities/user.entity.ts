@@ -26,7 +26,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false }) // select: false를 해주면 DB에서 password를 가져오지 않는다
   @Field((type) => String)
   password: string;
 
@@ -42,11 +42,14 @@ export class User extends CoreEntity {
   @BeforeUpdate() // 업데이트 전에 매번 해시화시킨다
   @BeforeInsert()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      // password가 존재하면
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

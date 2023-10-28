@@ -51,7 +51,10 @@ export class UserService {
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.users.findOne({ where: { email } });
+      const user = await this.users.findOne({
+        where: { email }, // email이 일치하는 user를 찾는다
+        select: ['password'], // password만 가져온다
+      });
       if (!user) {
         return { ok: false, error: 'user not found' };
       }
@@ -89,5 +92,25 @@ export class UserService {
       user.password = password;
     }
     return this.users.save(user);
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    // code를 받아서 user를 찾고 verified를 true로 변경
+    try {
+      const verification = await this.verifications.findOne({
+        where: { code }, // code가 일치하는 verification을 찾는다
+        relations: ['user'], // user를 가져오기 위해
+      });
+      if (verification) {
+        verification.user.verified = true;
+        console.log(verification.user);
+        this.users.save(verification.user);
+        return true;
+      }
+      throw new Error();
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 }
