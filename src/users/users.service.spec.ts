@@ -58,4 +58,22 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined(); // UserService가 정의되어 있어야 한다.
   });
+
+  describe('createAccount', () => {
+    it('should fail if user exists', async () => {
+      usersRepository.findOne.mockResolvedValue({
+        id: 1,
+        email: '',
+      });
+      const result = await service.createAccount({
+        email: '',
+        password: '',
+        role: 0,
+      });
+      expect(result).toMatchObject({
+        ok: false,
+        error: 'There is a user with that email already',
+      });
+    });
+  });
 });
