@@ -116,5 +116,11 @@ describe('UserService', () => {
 
       expect(result).toEqual({ ok: true }); // createAccount의 결과는 { ok: true }이어야 한다.
     });
+
+    it('should fail on exception', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error()); // findOne이 Error를 반환하도록 설정한다. save도 마찬가지.
+      const result = await service.createAccount(createAccountArgs); // createAccount를 실행한다.
+      expect(result).toEqual({ ok: false, error: "Couldn't create account" }); // createAccount의 결과는 { ok: false, error: "Couldn't create account" }이어야 한다.
+    });
   });
 });
