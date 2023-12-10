@@ -123,4 +123,18 @@ describe('UserService', () => {
       expect(result).toEqual({ ok: false, error: "Couldn't create account" }); // createAccount의 결과는 { ok: false, error: "Couldn't create account" }이어야 한다.
     });
   });
+
+  describe('login', () => {
+    it('should fail if user does not exist', async () => {
+      usersRepository.findOne.mockResolvedValue(null);
+      const result = await service.login({
+        email: '',
+        password: '',
+      });
+      expect(result).toEqual({
+        ok: false,
+        error: 'user not found',
+      });
+    });
+  });
 });
