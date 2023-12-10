@@ -136,5 +136,20 @@ describe('UserService', () => {
         error: 'user not found',
       });
     });
+    it('should fail if the password is wrong', async () => {
+      const mockedUser = {
+        id: 1,
+        checkPassword: jest.fn(() => Promise.resolve(false)), // checkPassword가 false를 반환하도록 설정한다.
+      };
+      usersRepository.findOne.mockResolvedValue(mockedUser); // findOne이 mockedUser를 반환하도록 설정한다.
+      const result = await service.login({
+        email: '',
+        password: '',
+      });
+      expect(result).toEqual({
+        ok: false,
+        error: 'wrong password',
+      });
+    });
   });
 });
