@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
+import { Repository } from 'typeorm';
 
 const mockRepository = {
   findOne: jest.fn(),
@@ -21,8 +22,11 @@ const mockMailService = {
   sendVerificationEmail: jest.fn(),
 };
 
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>; // 타입 의미: Repository의 모든 키를 가져와서 그 키들을 Record의 키로 만들고, Record의 값은 jest.Mock로 만든다.
+
 describe('UserService', () => {
   let service: UserService;
+  let usersRepository: MockRepository<User>;
 
   beforeAll(async () => {
     // 역할: 테스트 모듈을 만들어서 테스트 모듈을 통해 테스트를 진행한다.
@@ -48,6 +52,7 @@ describe('UserService', () => {
       ],
     }).compile(); // 테스트 모듈을 컴파일한다.
     service = module.get<UserService>(UserService); // 테스트 모듈에서 UserService를 가져온다.
+    usersRepository = module.get(getRepositoryToken(User)); // 테스트 모듈에서 User Repository를 가져온다.
   });
 
   it('should be defined', () => {
