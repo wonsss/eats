@@ -192,5 +192,11 @@ describe('UserService', () => {
       const result = await service.findById(findByIdArgs.id);
       expect(result).toEqual({ ok: true, user: findByIdArgs });
     });
+
+    it('should fail if no user is found', async () => {
+      usersRepository.findOneOrFail.mockRejectedValue(new Error());
+      const result = await service.findById(findByIdArgs.id);
+      expect(result).toEqual({ ok: false, error: 'User Not Found' });
+    });
   });
 });
