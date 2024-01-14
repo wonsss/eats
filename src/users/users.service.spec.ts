@@ -131,6 +131,7 @@ describe('UserService', () => {
       email: '',
       password: '',
     };
+
     it('should fail if user does not exist', async () => {
       usersRepository.findOne.mockResolvedValue(null);
       const result = await service.login(loginArgs);
@@ -171,6 +172,12 @@ describe('UserService', () => {
         ok: true,
         token: expect.any(String), // token이 String 타입이어야 한다.
       });
+    });
+
+    it('should fail on exception', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({ ok: false, error: "Can't log user in." });
     });
   });
 });
