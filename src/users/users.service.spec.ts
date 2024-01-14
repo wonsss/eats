@@ -12,6 +12,7 @@ const mockRepository = () => ({
   save: jest.fn(),
   create: jest.fn(),
   findOneOrFail: jest.fn(),
+  delete: jest.fn(),
 });
 
 const mockJwtService = () => ({
@@ -21,6 +22,7 @@ const mockJwtService = () => ({
 
 const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
+  sendVerificationSuccessEmail: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>; // 타입 의미: Repository의 모든 키를 가져와서 그 키들을 Record의 키로 만들고, Record의 값은 jest.Mock로 만든다.
@@ -263,6 +265,48 @@ describe('UserService', () => {
       const result = await service.editProfile(1, { email: '12' });
 
       expect(result).toEqual({ ok: false, error: 'Could not update profile.' });
+    });
+  });
+
+  describe('verifyEmail', () => {
+    const code = 'code';
+
+    it('should verify email', async () => {
+      const mockedVerification = {
+        user: {
+          verified: false,
+        },
+        id: 1,
+      };
+      verificationsRepository.findOne.mockResolvedValue(mockedVerification);
+
+      const result = await service.verifyEmail(code);
+
+      expect(verificationsRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.findOne).toHaveBeenCalledWith({
+        where: { code },
+        relations: ['user'],
+      });
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith({ verified: true });
+
+      expect(verificationsRepository.delete).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.delete).toHaveBeenCalledWith(
+        mockedVerification.id,
+      );
+      expect(result).toEqual({ ok: true });
+    });
+
+    it('should fail on verification not found', async () => {
+      verificationsRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.verifyEmail(code);
+      expect(result).toEqual({ ok: false, error: 'Verification not found.' });
+    });
+
+    it('should fail on exception', async () => {
+      verificationsRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.verifyEmail(code);
+      expect(result).toEqual({ ok: false, error: 'Could not verify email.' });
     });
   });
 });
