@@ -25,7 +25,7 @@ export class User extends CoreEntity {
   @Field((type) => Number)
   id: number;
 
-  @Column()
+  @Column({ unique: true }) // email은 unique해야 한다
   @Field((type) => String)
   @IsEmail()
   email: string;
