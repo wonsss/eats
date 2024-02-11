@@ -7,6 +7,11 @@ import {
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
+import { Category } from './entities/category.entity';
+import {
+  EditRestaurantInput,
+  EditRestaurantOutput,
+} from 'src/users/dtos/edit-restaurant.dto';
 import { CategoryRepository } from './repositories/category.repository';
 
 @Injectable()
@@ -36,6 +41,52 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not create restaurant',
+      };
+    }
+  }
+
+  async editRestaurant(
+    owner: User,
+    editRestaurantInput: EditRestaurantInput,
+  ): Promise<EditRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({
+        where: { id: editRestaurantInput.restaurantId },
+      });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't edit a restaurant that you don't own",
+        };
+      }
+
+      let category: Category = null;
+      if (editRestaurantInput.categoryName) {
+        category = await this.categories.getOrCreate(
+          editRestaurantInput.categoryName,
+        );
+      }
+      await this.restaurants.save([
+        {
+          id: editRestaurantInput.restaurantId,
+          ...editRestaurantInput,
+          ...(category && { category }),
+        },
+      ]);
+
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not edit Restaurant',
       };
     }
   }

@@ -1,9 +1,9 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Category } from './category.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Category } from './category.entity';
 
 @InputType('RestaurantInputType', { isAbstract: true })
 @ObjectType()
@@ -37,4 +37,7 @@ export class Restaurant extends CoreEntity {
     onDelete: 'CASCADE', // user를 지우면 restaurant도 지워진다.
   })
   owner: User;
+
+  @RelationId((restaurant: Restaurant) => restaurant.owner)
+  ownerId: number;
 }
