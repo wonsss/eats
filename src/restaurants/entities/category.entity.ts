@@ -9,15 +9,20 @@ import { Restaurant } from './restaurant.entity';
 @Entity() // Entity는 데이터베이스 테이블과 일치하는 클래스이다. Entity는 데이터베이스에서 데이터를 저장하고 검색하는 데 사용된다.
 export class Category extends CoreEntity {
   @Field((returns) => String)
-  @Column()
+  @Column({ unique: true })
   @IsString()
   @Length(5, 10)
   name: string;
 
-  @Field((type) => String)
-  @Column()
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
   @IsString()
   coverImg: string;
+
+  @Field((type) => String)
+  @Column({ unique: true })
+  @IsString()
+  slug: string;
 
   @Field((type) => [Restaurant], { nullable: true }) // category를 지울 때 restaurant을 지우면 안되기 때문에 nullable: true를 해준다)
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.category)
