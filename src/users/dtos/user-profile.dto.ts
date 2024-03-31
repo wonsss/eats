@@ -6,7 +6,7 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { MutationOutput } from 'src/common/dtos/output.dto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/user.entity';
 
 @ArgsType()
@@ -16,7 +16,7 @@ export class UserProfileInput {
 }
 
 @ObjectType()
-export class UserProfileOutput extends MutationOutput {
+export class UserProfileOutput extends CoreOutput {
   @Field((type) => User, { nullable: true }) // type은 User이고, 필수값이 아니다.
   user?: User;
 }

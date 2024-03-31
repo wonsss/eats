@@ -1,6 +1,6 @@
 import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 
-import { MutationOutput } from 'src/common/dtos/output.dto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Category } from '../entities/category.entity';
 
 @ArgsType()
@@ -10,7 +10,7 @@ export class CategoryInput {
 }
 
 @ObjectType()
-export class CategoryOutput extends MutationOutput {
+export class CategoryOutput extends CoreOutput {
   @Field((type) => Category, { nullable: true })
   category?: Category;
 }
