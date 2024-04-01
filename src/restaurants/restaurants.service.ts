@@ -280,9 +280,35 @@ export class RestaurantService {
     owner: User,
     createDishInput: CreateDishInput,
   ): Promise<CreateDishOutput> {
-    return {
-      ok: false,
-    };
+    try {
+      const restaurant = await this.restaurants.findOne({
+        where: { id: createDishInput.restaurantId },
+      });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't do that.",
+        };
+      }
+      await this.dishes.save(
+        this.dishes.create({ ...createDishInput, restaurant }),
+      );
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        ok: false,
+        error: 'Could not create dish',
+      };
+    }
   }
 
   async checkDishOwner(ownerId: number, dishId: number) {}
