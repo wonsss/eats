@@ -9,6 +9,7 @@ import {
 } from './restaurants.resolver';
 import { RestaurantService } from './restaurants.service';
 import { CategoryRepository } from './repositories/category.repository';
+import { DishRepository } from './repositories/dish.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Restaurant, Category])],
@@ -18,6 +19,7 @@ import { CategoryRepository } from './repositories/category.repository';
     CategoryResolver,
     CategoryRepository,
     DishResolver,
+    DishRepository,
   ],
 })
 export class RestaurantsModule {}
