@@ -71,7 +71,14 @@ import { OrderItem } from './orders/entities/order-item.entity';
       driver: ApolloDriver,
       autoSchemaFile: true,
       sortSchema: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      installSubscriptionHandlers: true,
+      context: ({ req, connection }) => {
+        if (req) {
+          return { user: req['user'] }; // http 연결에 대한 context
+        } else {
+          console.log(connection); // web socket 연결
+        }
+      },
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
     MailModule.forRoot({
